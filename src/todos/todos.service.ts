@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/database/database.service';
 
-
-interface Todo {
+export interface Todo {
   id: number;
   title: string;
   description: string;
@@ -34,17 +33,6 @@ export class TodosService {
     return task.rows[0];
   }
 
-  async updateStatus(
-    id: number,
-    completed: boolean,
-  ): Promise<Todo | undefined> {
-    const task = await this.dbService.query(
-      'update todos set completed = $1 where id = $2 returning *',
-      [completed, id],
-    );
-    return task.rows[0];
-  }
-
   async updateTodo(
     id: number,
     title: string,
@@ -53,6 +41,17 @@ export class TodosService {
     const task = await this.dbService.query(
       'update todos set title = $1, description = $2 where id = $3 returning *',
       [title, description, id],
+    );
+    return task.rows[0];
+  }
+
+  async updateStatus(
+    id: number,
+    completed: boolean,
+  ): Promise<Todo | undefined> {
+    const task = await this.dbService.query(
+      'update todos set completed = $1 where id = $2 returning *',
+      [completed, id],
     );
     return task.rows[0];
   }
