@@ -56,7 +56,7 @@ export class TodosService {
   }
 
   async updateStatus(
-    id: string,
+    id: number,
     isCompleted?: boolean,
     isArchived?: boolean,
     isDeleted?: boolean,
