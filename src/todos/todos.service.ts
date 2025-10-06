@@ -6,6 +6,8 @@ export interface Todo {
   title: string;
   description: string;
   isCompleted: boolean;
+  isArchived: boolean;
+  isDeleted: boolean;
 }
 
 @Injectable()
@@ -23,6 +25,13 @@ export class TodosService {
   async getAllTodos(): Promise<Todo[]> {
     const tasks = await this.dbService.query('select * from todos');
     return tasks.rows;
+  }
+
+  async getCompletedTask(): Promise<Todo[]> {
+    const isCompletedTask = await this.dbService.query(
+      'select * from todos where isCompleted = true',
+    );
+    return isCompletedTask.rows;
   }
 
   async getOneTodo(id: number): Promise<Todo | undefined> {
@@ -48,22 +57,20 @@ export class TodosService {
   async updateStatus(
     id: number,
     isCompleted: boolean,
+    isArchived: boolean,
+    isDeleted: boolean,
   ): Promise<Todo | undefined> {
     const updateTaskStatus = await this.dbService.query(
-      'update todos set isCompleted = $1 where id = $2 returning *',
-      [isCompleted, id],
+      'update todos set isCompleted = $1, isArchived = $2, isDeleted = $3 where id = $4 returning *',
+      [isCompleted, isArchived, isDeleted, id],
     );
     return updateTaskStatus.rows[0];
   }
 
-  async getCompletedTask(): Promise<Todo[]> {
-    const isCompletedTask = await this.dbService.query(
-      'select * from todos where isCompleted = true',
-    );
-    return isCompletedTask.rows;
-  }
-
   async deleteTodo(id: number): Promise<void> {
-    await this.dbService.query('delete from todos where id = $1', [id]);
+    await this.dbService.query(
+      'delete from todos where id = $1 and isDeleted = true',
+      [id],
+    );
   }
 }

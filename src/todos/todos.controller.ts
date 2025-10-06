@@ -28,6 +28,11 @@ export class TodosController {
     return this.todosService.getAllTodos();
   }
 
+  @Get('/completed')
+  async isCompletedTask() {
+    return this.todosService.getCompletedTask();
+  }
+
   @Get('/:id')
   async getOneTodo(@Param('id') id: string) {
     const todo = await this.todosService.getOneTodo(parseInt(id, 10));
@@ -56,16 +61,11 @@ export class TodosController {
       );
     }
 
-    if (todo.completed !== undefined) {
-      return this.todosService.updateStatus(todoId, todo.completed);
+    if (todo.isCompleted !== undefined) {
+      return this.todosService.updateStatus(todoId, todo.isCompleted);
     }
 
     return isTodoExist;
-  }
-
-  @Get('/completed')
-  async isCompletedTask() {
-    return this.todosService.getCompletedTask();
   }
 
   @Delete('/:id')

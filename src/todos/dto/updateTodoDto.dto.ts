@@ -11,5 +11,13 @@ export class UpdateTodoDto {
 
   @IsOptional()
   @IsBoolean()
-  completed?: boolean;
+  isCompleted?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isArchived: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isDeleted: boolean;
 }
