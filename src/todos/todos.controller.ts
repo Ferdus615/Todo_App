@@ -61,8 +61,17 @@ export class TodosController {
       );
     }
 
-    if (todo.isCompleted !== undefined) {
-      return this.todosService.updateStatus(todoId, todo.isCompleted);
+    if (
+      todo.isCompleted !== undefined ||
+      todo.isArchived !== undefined ||
+      todo.isDeleted !== undefined
+    ) {
+      return this.todosService.updateStatus(
+        todoId,
+        todo.isCompleted,
+        todo.isArchived,
+        todo.isDeleted,
+      );
     }
 
     return isTodoExist;

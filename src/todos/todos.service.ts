@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NotFoundError } from 'rxjs';
 import { DbService } from 'src/database/database.service';
 
 export interface Todo {
@@ -55,15 +56,28 @@ export class TodosService {
   }
 
   async updateStatus(
-    id: number,
-    isCompleted: boolean,
-    isArchived: boolean,
-    isDeleted: boolean,
+    id: string,
+    isCompleted?: boolean,
+    isArchived?: boolean,
+    isDeleted?: boolean,
   ): Promise<Todo | undefined> {
-    const updateTaskStatus = await this.dbService.query(
-      'update todos set isCompleted = $1, isArchived = $2, isDeleted = $3 where id = $4 returning *',
-      [isCompleted, isArchived, isDeleted, id],
+    const isTodoExistWithId = await this.dbService.query(
+      'select * from todos where id = $1',
+      [id],
     );
+    const todoWithId = isTodoExistWithId.rows[0];
+    if (!todoWithId) return undefined;
+
+    const updateTaskStatus = await this.dbService.query(
+      'update todos set isCompleted = $1, isArchived =$2, isDeleted = $3 where id = $4 returning *',
+      [
+        isCompleted ?? todoWithId.isCompleted,
+        isArchived ?? todoWithId.isArchived,
+        isDeleted ?? todoWithId.isDeleted,
+        id,
+      ],
+    );
+
     return updateTaskStatus.rows[0];
   }
 
