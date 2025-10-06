@@ -5,7 +5,7 @@ export interface Todo {
   id: number;
   title: string;
   description: string;
-  completed: boolean;
+  isCompleted: boolean;
 }
 
 @Injectable()
@@ -14,7 +14,7 @@ export class TodosService {
 
   async createTodo(title: string, description: string): Promise<Todo> {
     const task = await this.dbService.query(
-      'insert into todos (title, description, completed) values ($1, $2, $3) returning *',
+      'insert into todos (title, description, isCompleted) values ($1, $2, $3) returning *',
       [title, description, false],
     );
     return task.rows[0];
@@ -38,22 +38,29 @@ export class TodosService {
     title: string,
     description: string,
   ): Promise<Todo | undefined> {
-    const task = await this.dbService.query(
+    const updateTask = await this.dbService.query(
       'update todos set title = $1, description = $2 where id = $3 returning *',
       [title, description, id],
     );
-    return task.rows[0];
+    return updateTask.rows[0];
   }
 
   async updateStatus(
     id: number,
-    completed: boolean,
+    isCompleted: boolean,
   ): Promise<Todo | undefined> {
-    const task = await this.dbService.query(
-      'update todos set completed = $1 where id = $2 returning *',
-      [completed, id],
+    const updateTaskStatus = await this.dbService.query(
+      'update todos set isCompleted = $1 where id = $2 returning *',
+      [isCompleted, id],
     );
-    return task.rows[0];
+    return updateTaskStatus.rows[0];
+  }
+
+  async getCompletedTask(): Promise<Todo[]> {
+    const isCompletedTask = await this.dbService.query(
+      'select * from todos where isCompleted = true',
+    );
+    return isCompletedTask.rows;
   }
 
   async deleteTodo(id: number): Promise<void> {

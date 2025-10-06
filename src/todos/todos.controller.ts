@@ -63,6 +63,11 @@ export class TodosController {
     return isTodoExist;
   }
 
+  @Get('/completed')
+  async isCompletedTask() {
+    return this.todosService.getCompletedTask();
+  }
+
   @Delete('/:id')
   @HttpCode(204)
   async deleteTodo(@Param('id') id: string) {
