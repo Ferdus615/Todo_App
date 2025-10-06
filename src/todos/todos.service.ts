@@ -56,11 +56,11 @@ export class TodosService {
     return updateTaskStatus.rows[0];
   }
 
-  async completedTask(id: number): Promise<Todo | undefined> {
+  async getCompletedTask(): Promise<Todo[]> {
     const isCompletedTask = await this.dbService.query(
-      'select * from todos where isCompleted = true returning *'
+      'select * from todos where isCompleted = true',
     );
-    return isCompletedTask.rows[0]
+    return isCompletedTask.rows;
   }
 
   async deleteTodo(id: number): Promise<void> {
