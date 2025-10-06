@@ -15,9 +15,9 @@ export class UpdateTodoDto {
 
   @IsOptional()
   @IsBoolean()
-  isArchived: boolean;
+  isArchived?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  isDeleted: boolean;
+  isDeleted?: boolean;
 }
