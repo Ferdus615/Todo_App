@@ -87,12 +87,14 @@ export class TodosService {
     const todoWithId = isTodoExistWithId.rows[0];
     if (!todoWithId) return undefined;
 
+    console.log('todoWithId', todoWithId);
+
     const updateTaskStatus = await this.dbService.query(
-      'update todos set isCompleted = $1, isArchived =$2, isDeleted = $3 where id = $4 returning *',
+      'update todos set iscompleted = $1, isarchived = $2, isdeleted = $3 where id = $4 returning *',
       [
-        isCompleted ?? todoWithId.isCompleted,
-        isArchived ?? todoWithId.isArchived,
-        isDeleted ?? todoWithId.isDeleted,
+        isCompleted ?? todoWithId.iscompleted,
+        isArchived ?? todoWithId.isarchived,
+        isDeleted ?? todoWithId.isdeleted,  
         id,
       ],
     );
