@@ -33,6 +33,16 @@ export class TodosController {
     return this.todosService.getCompletedTask();
   }
 
+  @Get('/archived')
+  async isArchivedTask() {
+    return this.todosService.getArchivedTask();
+  }
+
+  @Get('/deleted')
+  async isDeletedTask() {
+    return this.todosService.getDeletedTask();
+  }
+
   @Get('/:id')
   async getOneTodo(@Param('id') id: string) {
     const todo = await this.todosService.getOneTodo(parseInt(id, 10));
@@ -68,9 +78,9 @@ export class TodosController {
     ) {
       return this.todosService.updateStatus(
         todoId,
-        todo.isCompleted ?? isTodoExist.isCompleted,
-        todo.isArchived ?? isTodoExist.isArchived,
-        todo.isDeleted ?? isTodoExist.isDeleted,
+        todo.isCompleted,
+        todo.isArchived,
+        todo.isDeleted,
       );
     }
 

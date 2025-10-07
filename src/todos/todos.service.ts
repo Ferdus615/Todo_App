@@ -23,15 +23,35 @@ export class TodosService {
   }
 
   async getAllTodos(): Promise<Todo[]> {
-    const tasks = await this.dbService.query('select * from todos');
+    const tasks = await this.dbService.query(
+      'select * from todos where isArchived = $1 and isDeleted = $2',
+      [false, false],
+    );
     return tasks.rows;
   }
 
   async getCompletedTask(): Promise<Todo[]> {
     const isCompletedTask = await this.dbService.query(
-      'select * from todos where isCompleted = true',
+      'select * from todos where isCompleted = $1',
+      [true],
     );
     return isCompletedTask.rows;
+  }
+
+  async getArchivedTask(): Promise<Todo[]> {
+    const isArchivedTask = await this.dbService.query(
+      'select * from todos where isArchived = $1',
+      [true],
+    );
+    return isArchivedTask.rows;
+  }
+
+  async getDeletedTask(): Promise<Todo[]> {
+    const isDeletedTask = await this.dbService.query(
+      'select * from todos where isDeleted = $1',
+      [true],
+    );
+    return isDeletedTask.rows;
   }
 
   async getOneTodo(id: number): Promise<Todo | undefined> {
