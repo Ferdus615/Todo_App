@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { NotFoundError } from 'rxjs';
 import { DbService } from 'src/database/database.service';
 
 export interface Todo {
@@ -17,8 +16,8 @@ export class TodosService {
 
   async createTodo(title: string, description: string): Promise<Todo> {
     const task = await this.dbService.query(
-      'insert into todos (title, description, isCompleted) values ($1, $2, $3) returning *',
-      [title, description, false],
+      'insert into todos (title, description, isCompleted, isArchived, isDeleted) values ($1, $2, $3, $4, $5) returning *',
+      [title, description, false, false, false],
     );
     return task.rows[0];
   }

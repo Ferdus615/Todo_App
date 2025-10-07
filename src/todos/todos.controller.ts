@@ -68,9 +68,9 @@ export class TodosController {
     ) {
       return this.todosService.updateStatus(
         todoId,
-        todo.isCompleted,
-        todo.isArchived,
-        todo.isDeleted,
+        todo.isCompleted ?? isTodoExist.isCompleted,
+        todo.isArchived ?? isTodoExist.isArchived,
+        todo.isDeleted ?? isTodoExist.isDeleted,
       );
     }
 
