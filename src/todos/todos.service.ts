@@ -1,28 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/database/database.service';
-
-export interface Todo {
-  id: number;
-  title: string;
-  description: string;
-  isCompleted: boolean;
-  isArchived: boolean;
-  isDeleted: boolean;
-}
+import { TodoResponseDto } from './dto/todoResponse.dto';
+import { CreateTodoDto } from './dto/createTodoDto.dto';
+import { UpdateTodoDto } from './dto/updateTodoDto.dto';
 
 @Injectable()
 export class TodosService {
   constructor(private readonly dbService: DbService) {}
 
-  async createTodo(title: string, description: string): Promise<Todo> {
+  async createTodo(dto: CreateTodoDto): Promise<TodoResponseDto> {
     const task = await this.dbService.query(
       'insert into todos (title, description, isCompleted, isArchived, isDeleted) values ($1, $2, $3, $4, $5) returning *',
-      [title, description, false, false, false],
+      [dto.title, dto.description, false, false, false],
     );
     return task.rows[0];
   }
 
-  async getAllTodos(): Promise<Todo[]> {
+  async getAllTodos(): Promise<TodoResponseDto[]> {
     const tasks = await this.dbService.query(
       'select * from todos where isArchived = $1 and isDeleted = $2',
       [false, false],
@@ -30,7 +24,7 @@ export class TodosService {
     return tasks.rows;
   }
 
-  async getCompletedTask(): Promise<Todo[]> {
+  async getCompletedTask(): Promise<TodoResponseDto[]> {
     const isCompletedTask = await this.dbService.query(
       'select * from todos where isCompleted = $1',
       [true],
@@ -38,7 +32,7 @@ export class TodosService {
     return isCompletedTask.rows;
   }
 
-  async getArchivedTask(): Promise<Todo[]> {
+  async getArchivedTask(): Promise<TodoResponseDto[]> {
     const isArchivedTask = await this.dbService.query(
       'select * from todos where isArchived = $1',
       [true],
@@ -46,7 +40,7 @@ export class TodosService {
     return isArchivedTask.rows;
   }
 
-  async getDeletedTask(): Promise<Todo[]> {
+  async getDeletedTask(): Promise<TodoResponseDto[]> {
     const isDeletedTask = await this.dbService.query(
       'select * from todos where isDeleted = $1',
       [true],
@@ -54,7 +48,7 @@ export class TodosService {
     return isDeletedTask.rows;
   }
 
-  async getOneTodo(id: number): Promise<Todo | undefined> {
+  async getOneTodo(id: number): Promise<TodoResponseDto | undefined> {
     const task = await this.dbService.query(
       'select * from todos where id = $1',
       [id],
@@ -64,27 +58,25 @@ export class TodosService {
 
   async updateTodo(
     id: number,
-    title: string,
-    description: string,
-  ): Promise<Todo | undefined> {
+    dto: UpdateTodoDto,
+  ): Promise<TodoResponseDto | undefined> {
     const updateTask = await this.dbService.query(
       'update todos set title = $1, description = $2 where id = $3 returning *',
-      [title, description, id],
+      [dto.title, dto.description, id],
     );
     return updateTask.rows[0];
   }
 
   async updateStatus(
     id: number,
-    isCompleted?: boolean,
-    isArchived?: boolean,
-    isDeleted?: boolean,
-  ): Promise<Todo | undefined> {
-    const isTodoExistWithId = await this.dbService.query(
+    dto: UpdateTodoDto,
+  ): Promise<TodoResponseDto | undefined> {
+    const existing = await this.dbService.query(
       'select * from todos where id = $1',
       [id],
     );
-    const todoWithId = isTodoExistWithId.rows[0];
+
+    const todoWithId = existing.rows[0];
     if (!todoWithId) return undefined;
 
     console.log('todoWithId', todoWithId);
@@ -92,9 +84,9 @@ export class TodosService {
     const updateTaskStatus = await this.dbService.query(
       'update todos set iscompleted = $1, isarchived = $2, isdeleted = $3 where id = $4 returning *',
       [
-        isCompleted ?? todoWithId.iscompleted,
-        isArchived ?? todoWithId.isarchived,
-        isDeleted ?? todoWithId.isdeleted,  
+        dto.isCompleted ?? todoWithId.iscompleted,
+        dto.isArchived ?? todoWithId.isarchived,
+        dto.isDeleted ?? todoWithId.isdeleted,
         id,
       ],
     );

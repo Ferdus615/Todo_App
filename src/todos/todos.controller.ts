@@ -9,9 +9,10 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { TodosService, Todo } from './todos.service';
+import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/createTodoDto.dto';
 import { UpdateTodoDto } from './dto/updateTodoDto.dto';
+import { TodoResponseDto } from './dto/todoResponse.dto';
 
 @Controller('todos')
 export class TodosController {
@@ -19,8 +20,8 @@ export class TodosController {
 
   @Post('/')
   @HttpCode(201)
-  async createTodo(@Body() todo: CreateTodoDto): Promise<Todo> {
-    return this.todosService.createTodo(todo.title, todo.description);
+  async createTodo(@Body() dto: CreateTodoDto): Promise<TodoResponseDto> {
+    return this.todosService.createTodo(dto);
   }
 
   @Get('/')
@@ -55,36 +56,25 @@ export class TodosController {
   }
 
   @Put('/:id')
-  async updateTodo(@Param('id') id: string, @Body() todo: UpdateTodoDto) {
+  async updateTodo(@Param('id') id: string, @Body() dto: UpdateTodoDto) {
     const todoId = parseInt(id, 10);
 
-    const isTodoExist = await this.todosService.getOneTodo(todoId);
-    if (!isTodoExist) {
-      throw new NotFoundException(`Todo with id:${id} not found!`);
-    }
+    const existing = await this.todosService.getOneTodo(todoId);
+    if (!existing) throw new NotFoundException(`Todo with id:${id} not found!`);
 
-    if (todo.title || todo.description) {
-      return this.todosService.updateTodo(
-        todoId,
-        todo.title ?? isTodoExist.title,
-        todo.description ?? isTodoExist.description,
-      );
+    if (dto.title || dto.description) {
+      return this.todosService.updateTodo(todoId, dto);
     }
 
     if (
-      todo.isCompleted !== undefined ||
-      todo.isArchived !== undefined ||
-      todo.isDeleted !== undefined
+      dto.isCompleted !== undefined ||
+      dto.isArchived !== undefined ||
+      dto.isDeleted !== undefined
     ) {
-      return this.todosService.updateStatus(
-        todoId,
-        todo.isCompleted,
-        todo.isArchived,
-        todo.isDeleted,
-      );
+      return this.todosService.updateStatus(todoId, dto);
     }
 
-    return isTodoExist;
+    return existing;
   }
 
   @Delete('/:id')
