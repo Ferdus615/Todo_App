@@ -24,6 +24,8 @@ export class TodosController {
     return this.todosService.createTodo(dto);
   }
 
+  @Post('')
+
   @Get('/')
   async getAllTodos() {
     return this.todosService.getAllTodos();
