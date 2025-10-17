@@ -20,7 +20,7 @@ export class ReactionResponseDto {
   reaction_type: ReactionType;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber() 
   user_id?: number;
 
   @IsDateString()
