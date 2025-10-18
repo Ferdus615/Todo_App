@@ -1,6 +1,6 @@
 import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
-export class TodoResponseDto {
+export class ResponseTodoDto {
   @IsNumber()
   id: number;
 
