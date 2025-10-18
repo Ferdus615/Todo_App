@@ -3,6 +3,7 @@ import { DbService } from 'src/database/database.service';
 import { TodoResponseDto } from './dto/todoResponseDto.dto';
 import { CreateTodoDto } from './dto/createTodoDto.dto';
 import { UpdateTodoDto } from './dto/updateTodoDto.dto';
+import { CreateReactionDto } from './dto/createReaction.dto';
 
 @Injectable()
 export class TodosService {
@@ -15,6 +16,8 @@ export class TodosService {
     );
     return task.rows[0];
   }
+
+  // async createReaction(dto: CreateReactionDto): 
 
   async getAllTodos(): Promise<TodoResponseDto[]> {
     const tasks = await this.dbService.query(
