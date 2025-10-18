@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/database/database.service';
-import { TodoResponseDto } from './dto/todoResponse.dto';
+import { TodoResponseDto } from './dto/todoResponseDto.dto';
 import { CreateTodoDto } from './dto/createTodoDto.dto';
 import { UpdateTodoDto } from './dto/updateTodoDto.dto';
 
