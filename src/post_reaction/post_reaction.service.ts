@@ -15,4 +15,33 @@ export class PostReactionService {
 
     return reaction.rows[0];
   }
+
+  async getAllReaction(): Promise<ResponseReactionDto[]> {
+    const allReaction = await this.dbService.query(
+      'select * from post_reaction',
+      [],
+    );
+
+    return allReaction.rows;
+  }
+
+  async getOneReaction(id: number): Promise<ResponseReactionDto | undefined> {
+    const reaction = await this.dbService.query(
+      'select * from post_reaction where id= $1',
+      [id],
+    );
+
+    return reaction.rows[0];
+  }
+
+  async getReactionByTodo(
+    todo_id: number,
+  ): Promise<ResponseReactionDto | undefined> {
+    const reactionOfTodo = await this.dbService.query(
+      'select * from post_reaction where todo_id = $1',
+      [todo_id],
+    );
+
+    return reactionOfTodo.rows[0];
+  }
 }
