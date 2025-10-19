@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/database/database.service';
 import { CreateReactionDto } from './dto/createReactionDto.dto';
 import { ResponseReactionDto } from './dto/responseReactionDto.dto';
+import { UpadateReactionDto } from './dto/updateReactionDto.dto';
 
 @Injectable()
 export class PostReactionService {
@@ -41,7 +42,18 @@ export class PostReactionService {
       'select * from post_reaction where todo_id = $1',
       [todo_id],
     );
-
     return reactionOfTodo.rows[0];
+  }
+
+  async updateReaction(
+    id,
+    dto: UpadateReactionDto,
+  ): Promise<ResponseReactionDto | undefined> {
+    const react = await this.dbService.query(
+      'update post_reaction set reaction_type = $1 where id = $2',
+      [dto.reaction_type, id],
+    );
+
+    return react.rows[0];
   }
 }

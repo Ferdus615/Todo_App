@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { PostReactionService } from './post_reaction.service';
 import { CreateReactionDto } from './dto/createReactionDto.dto';
@@ -49,4 +50,7 @@ export class PostReactionController {
 
     return todoReact;
   }
+
+  @Put('/:id')
+  async
 }
