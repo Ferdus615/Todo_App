@@ -52,5 +52,13 @@ export class PostReactionController {
   }
 
   @Put('/:id')
-  async
+  async updateReaction(@Param('id') id: string) {
+    const reaction = await this.postReactionService.updateReaction(
+      parseInt(id, 10),
+    );
+
+    if (!reaction) throw new NotFoundException(`Item with id:${id} not found!`);
+
+    return reaction;
+  }
 }
