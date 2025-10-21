@@ -13,7 +13,7 @@ import {
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/createTodoDto.dto';
 import { UpdateTodoDto } from './dto/updateTodoDto.dto';
-import { TodoResponseDto } from './dto/todoResponse.dto';
+import { ResponseTodoDto } from './dto/responseTodoDto.dto';
 
 @Controller('todos')
 export class TodosController {
@@ -21,11 +21,9 @@ export class TodosController {
 
   @Post('/')
   @HttpCode(201)
-  async createTodo(@Body() dto: CreateTodoDto): Promise<TodoResponseDto> {
+  async createTodo(@Body() dto: CreateTodoDto): Promise<ResponseTodoDto> {
     return this.todosService.createTodo(dto);
   }
-
-  @Post('')
 
   @Get('/')
   async getAllTodos() {

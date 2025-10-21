@@ -1,15 +1,7 @@
 import { IsDateString, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { ReactionType } from '../enum/reactionType.enum';
 
-export enum ReactionType {
-  LIKE = 'like',
-  LOVE = 'love',
-  HAHA = 'haha',
-  WOW = 'wow',
-  SAD = 'sad',
-  ANGRY = 'angry',
-}
-
-export class ReactionResponseDto {
+export class ResponseReactionDto {
   @IsNumber()
   id: number;
 
