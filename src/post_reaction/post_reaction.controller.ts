@@ -17,10 +17,10 @@ export class PostReactionController {
   constructor(private readonly postReactionService: PostReactionService) {}
 
   @Post('/')
-  async addReaction(
+  async upsertReaction(
     @Body() dto: CreateReactionDto,
   ): Promise<ResponseReactionDto> {
-    return this.postReactionService.addReaction(dto);
+    return this.postReactionService.upsertReaction(dto);
   }
 
   @Get('/')

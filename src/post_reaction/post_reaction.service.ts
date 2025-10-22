@@ -8,13 +8,27 @@ import { UpadateReactionDto } from './dto/updateReactionDto.dto';
 export class PostReactionService {
   constructor(private readonly dbService: DbService) {}
 
-  async addReaction(dto: CreateReactionDto): Promise<ResponseReactionDto> {
-    const reaction = await this.dbService.query(
-      'insert into post_reaction (todo_id, reaction_type, user_id) values ($1, $2, $3) returning *',
-      [dto.todo_id, dto.reaction_type, dto.user_id || null],
+  async upsertReaction(dto: CreateReactionDto): Promise<ResponseReactionDto> {
+    const react = await this.dbService.query(
+      'select * from post_reaction where todo_id = $1 and user_id = $2',
+      [dto.todo_id, dto.user_id],
     );
 
-    return reaction.rows[0];
+    if (!react) {
+      const addReaction = await this.dbService.query(
+        'insert into post_reaction (todo_id, reaction_type, user_id) values ($1, $2, $3) returning *',
+        [dto.todo_id, dto.reaction_type, dto.user_id || null],
+      );
+
+      return addReaction.rows[0];
+    } else {
+      const updateReaction = await this.dbService.query(
+        'update post_reaction set reaction_type = $1 where todo_id = $2 and user_id = $3',
+        [dto.reaction_type, dto.todo_id, dto.user_id],
+      );
+
+      return updateReaction.rows[0];
+    }
   }
 
   async getAllReaction(): Promise<ResponseReactionDto[]> {
