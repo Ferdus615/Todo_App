@@ -11,10 +11,10 @@ export class PostReactionService {
   async upsertReaction(dto: CreateReactionDto): Promise<ResponseReactionDto> {
     const react = await this.dbService.query(
       'select * from post_reaction where todo_id = $1 and user_id = $2',
-      [dto.todo_id, dto.user_id],
+      [dto.todo_id, dto.user_id || null],
     );
 
-    if (!react) {
+    if (react.rows.length === 0) {
       const addReaction = await this.dbService.query(
         'insert into post_reaction (todo_id, reaction_type, user_id) values ($1, $2, $3) returning *',
         [dto.todo_id, dto.reaction_type, dto.user_id || null],
@@ -23,8 +23,8 @@ export class PostReactionService {
       return addReaction.rows[0];
     } else {
       const updateReaction = await this.dbService.query(
-        'update post_reaction set reaction_type = $1 where todo_id = $2 and user_id = $3',
-        [dto.reaction_type, dto.todo_id, dto.user_id],
+        'update post_reaction set reaction_type = $1, created_at = CURRENT_TIMESTAMP where todo_id = $2 and user_id = $3 returning *',
+        [dto.reaction_type, dto.todo_id, dto.user_id || null],
       );
 
       return updateReaction.rows[0];
