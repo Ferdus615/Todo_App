@@ -45,15 +45,15 @@ export class PostReactionService {
     return reactionOfTodo.rows[0];
   }
 
-  async updateReaction(
-    id,
-    dto: UpadateReactionDto,
-  ): Promise<ResponseReactionDto | undefined> {
-    const react = await this.dbService.query(
-      'update post_reaction set reaction_type = $1 where id = $2',
-      [dto.reaction_type, id],
-    );
+  // async updateReaction(
+  //   id,
+  //   dto: UpadateReactionDto,
+  // ): Promise<ResponseReactionDto | undefined> {
+  //   const react = await this.dbService.query(
+  //     'update post_reaction set reaction_type = $1 where id = $2',
+  //     [dto.reaction_type, id],
+  //   );
 
-    return react.rows[0];
-  }
+  //   return react.rows[0];
+  // }
 }

@@ -10,7 +10,7 @@ import {
 import { PostReactionService } from './post_reaction.service';
 import { CreateReactionDto } from './dto/createReactionDto.dto';
 import { ResponseReactionDto } from './dto/responseReactionDto.dto';
-import { todo } from 'node:test';
+import { UpadateReactionDto } from './dto/updateReactionDto.dto';
 
 @Controller('react')
 export class PostReactionController {
@@ -51,14 +51,20 @@ export class PostReactionController {
     return todoReact;
   }
 
-  @Put('/:id')
-  async updateReaction(@Param('id') id: string) {
-    const reaction = await this.postReactionService.updateReaction(
-      parseInt(id, 10),
-    );
+  // @Put('/:id')
+  // async updateReaction(
+  //   @Param('id') id: string,
+  //   @Body('dto') dto: UpadateReactionDto,
+  // ) {
+  //   const reaction = await this.postReactionService.updateReaction(
+  //     parseInt(id, 10),
+  //     dto,
+  //   );
 
-    if (!reaction) throw new NotFoundException(`Item with id:${id} not found!`);
+  //   console.log(reaction);
 
-    return reaction;
-  }
+  //   if (!reaction) throw new NotFoundException(`Item with id:${id} not found!`);
+
+  //   return reaction;
+  // }
 }
