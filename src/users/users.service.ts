@@ -30,12 +30,12 @@ export class UsersService {
     return plainToInstance(ResponseUserDto, user.rows[0]);
   }
 
-  async findAllUser(): Promise<ResponseUserDto[]> {
+  async getAllUser(): Promise<ResponseUserDto[]> {
     const users = await this.dbService.query('select * from users');
     return plainToInstance(ResponseUserDto, users.rows);
   }
 
-  async findByEmail(email: string): Promise<ResponseUserDto | undefined> {
+  async getByEmail(email: string): Promise<ResponseUserDto | undefined> {
     const emailUser = await this.dbService.query(
       'select * from users where email = $1',
       [email],
@@ -45,7 +45,7 @@ export class UsersService {
     return plainToInstance(ResponseUserDto, emailUser.rows[0]);
   }
 
-  async findByName(
+  async getByName(
     first_name: string,
     last_name: string,
   ): Promise<ResponseUserDto | undefined> {
@@ -57,4 +57,6 @@ export class UsersService {
 
     return plainToInstance(ResponseUserDto, nameUser.rows[0]);
   }
+
+  async get
 }
