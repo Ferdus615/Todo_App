@@ -35,7 +35,17 @@ export class UsersService {
     return plainToInstance(ResponseUserDto, users.rows);
   }
 
-  async getByEmail(email: string): Promise<ResponseUserDto | undefined> {
+  async getuserById(id: number): Promise<ResponseUserDto> {
+    const idUser = await this.dbService.query(
+      'select * form users where id = $1',
+      [id],
+    );
+    if (!idUser) throw new NotFoundException(`Items with id:${id} not found!`);
+
+    return plainToInstance(ResponseUserDto, idUser.rows[0]);
+  }
+
+  async getUserByEmail(email: string): Promise<ResponseUserDto | undefined> {
     const emailUser = await this.dbService.query(
       'select * from users where email = $1',
       [email],
@@ -45,7 +55,7 @@ export class UsersService {
     return plainToInstance(ResponseUserDto, emailUser.rows[0]);
   }
 
-  async getByName(
+  async getUserByName(
     first_name: string,
     last_name: string,
   ): Promise<ResponseUserDto | undefined> {
@@ -53,10 +63,18 @@ export class UsersService {
       'select * from users where first_name = $1 and last_name = $2',
       [first_name, last_name],
     );
-    if (!nameUser) throw new NotFoundException(`No such user exits!`);
+    if (!nameUser) throw new NotFoundException('No such user exits!');
 
     return plainToInstance(ResponseUserDto, nameUser.rows[0]);
   }
 
-  async get
+  async deleteUser(id: number): Promise<ResponseUserDto> {
+    const result = await this.dbService.query(
+      'delte from users where id = $1 returning id, email',
+      [id],
+    );
+    if (!result) throw new NotFoundException("User doesn't exists!");
+
+    return plainToInstance(ResponseUserDto, result.rows[0]);
+  }
 }
