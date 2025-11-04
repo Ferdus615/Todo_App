@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/createUserDto.dto';
 import { ResponseUserDto } from './dto/responseUserDto.dto';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
+import { use } from 'passport';
 
 @Injectable()
 export class UsersService {
@@ -36,36 +37,45 @@ export class UsersService {
   }
 
   async getuserById(id: number): Promise<ResponseUserDto> {
-    const idUser = await this.dbService.query(
-      'select * form users where id = $1',
+    const user = await this.dbService.query(
+      'select * from users where id = $1',
       [id],
     );
-    if (!idUser) throw new NotFoundException(`Items with id:${id} not found!`);
 
-    return plainToInstance(ResponseUserDto, idUser.rows[0]);
+    const idUser = user.rows[0];
+
+    if (!idUser) throw new NotFoundException('Email already exits!');
+
+    return plainToInstance(ResponseUserDto, idUser);
   }
 
   async getUserByEmail(email: string): Promise<ResponseUserDto | undefined> {
-    const emailUser = await this.dbService.query(
+    const user = await this.dbService.query(
       'select * from users where email = $1',
       [email],
     );
-    if (!emailUser) throw new NotFoundException(`${email} doesn't exist!`);
 
-    return plainToInstance(ResponseUserDto, emailUser.rows[0]);
+    const emailUser = user.rows[0];
+
+    if (!emailUser) return undefined;
+
+    return plainToInstance(ResponseUserDto, emailUser);
   }
 
   async getUserByName(
     first_name: string,
     last_name: string,
   ): Promise<ResponseUserDto | undefined> {
-    const nameUser = await this.dbService.query(
+    const user = await this.dbService.query(
       'select * from users where first_name = $1 and last_name = $2',
       [first_name, last_name],
     );
-    if (!nameUser) throw new NotFoundException('No such user exits!');
 
-    return plainToInstance(ResponseUserDto, nameUser.rows[0]);
+    const nameUser = user.rows[0];
+
+    if (!nameUser) return undefined;
+
+    return plainToInstance(ResponseUserDto, nameUser);
   }
 
   async deleteUser(id: number): Promise<ResponseUserDto> {
