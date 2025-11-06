@@ -1,4 +1,5 @@
 import {
+  Body,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -7,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/users/dto/createUserDto.dto';
 import { UsersService } from 'src/users/users.service';
+import { LoginUserDto } from './dto/loginUserDto.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,11 +35,11 @@ export class AuthService {
     };
   }
 
-  async login(email: string, password: string) {
-    const user = await this.userService.getUserByEmail(email);
+  async login(@Body() dto: LoginUserDto) {
+    const user = await this.userService.getUserByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Invalid email or password!');
 
-    const matchPass = await bcrypt.compare(password, user.password);
+    const matchPass = await bcrypt.compare(dto.password, user.password);
     if (!matchPass)
       throw new UnauthorizedException('Invalid email or password!');
 
@@ -48,7 +50,7 @@ export class AuthService {
     };
 
     return {
-      messsage: 'Login successful',
+      message: 'Login successful',
       access_token: await this.jwtService.signAsync(payload),
       user,
     };

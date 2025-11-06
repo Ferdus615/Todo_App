@@ -11,6 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/createUserDto.dto';
 import { ResponseUserDto } from './dto/responseUserDto.dto';
+import { plainToClass, plainToInstance } from 'class-transformer';
 
 @Controller('users')
 export class UsersController {
@@ -27,16 +28,14 @@ export class UsersController {
     return this.usersService.getAllUser();
   }
 
-  @Get('/:id')
-  async getuserById(@Param('id') id: number): Promise<ResponseUserDto> {
-    return this.usersService.getuserById(id);
-  }
-
   @Get('/email')
   async getUserByEmail(
     @Query('email') email: string,
   ): Promise<ResponseUserDto | undefined> {
-    return this.usersService.getUserByEmail(email);
+    const userWithHash = await this.usersService.getUserByEmail(email);
+    if (!userWithHash) return undefined;
+
+    return plainToInstance(ResponseUserDto, userWithHash);
   }
 
   @Get('/name')
@@ -45,6 +44,11 @@ export class UsersController {
     @Query('last_name') last_name: string,
   ): Promise<ResponseUserDto | undefined> {
     return this.usersService.getUserByName(first_name, last_name);
+  }
+
+  @Get('/:id')
+  async getuserById(@Param('id') id: number): Promise<ResponseUserDto> {
+    return this.usersService.getuserById(id);
   }
 
   @Delete('/:id')

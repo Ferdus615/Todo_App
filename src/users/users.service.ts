@@ -44,7 +44,7 @@ export class UsersService {
 
     const idUser = user.rows[0];
 
-    if (!idUser) throw new NotFoundException('Email already exits!');
+    if (!idUser) throw new NotFoundException(`User with id:${id} not found`);
 
     return plainToInstance(ResponseUserDto, idUser);
   }
@@ -80,7 +80,7 @@ export class UsersService {
 
   async deleteUser(id: number): Promise<ResponseUserDto> {
     const result = await this.dbService.query(
-      'delte from users where id = $1 returning id, email',
+      'delete from users where id = $1 returning id, email',
       [id],
     );
     if (!result) throw new NotFoundException("User doesn't exists!");
