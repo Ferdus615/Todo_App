@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/database/database.service';
 import { CreateReactionDto } from './dto/createReactionDto.dto';
 import { ResponseReactionDto } from './dto/responseReactionDto.dto';
-import { UpadateReactionDto } from './dto/updateReactionDto.dto';
 
 @Injectable()
 export class PostReactionService {
