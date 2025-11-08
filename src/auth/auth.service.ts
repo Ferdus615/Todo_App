@@ -9,6 +9,8 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/users/dto/createUserDto.dto';
 import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from './dto/loginUserDto.dto';
+import { plainToInstance } from 'class-transformer';
+import { ResponseUserDto } from 'src/users/dto/responseUserDto.dto';
 
 @Injectable()
 export class AuthService {
@@ -49,10 +51,12 @@ export class AuthService {
       email: user.email,
     };
 
+    const userResponse = plainToInstance(ResponseUserDto, user);
+
     return {
       message: 'Login successful',
       access_token: await this.jwtService.signAsync(payload),
-      user,
+      user: userResponse,
     };
   }
 

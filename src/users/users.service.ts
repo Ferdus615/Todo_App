@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/createUserDto.dto';
 import { ResponseUserDto } from './dto/responseUserDto.dto';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
-import { use } from 'passport';
+import { UserWithPassword } from './dto/responseWithPassDto.dto';
 
 @Injectable()
 export class UsersService {
@@ -49,7 +49,7 @@ export class UsersService {
     return plainToInstance(ResponseUserDto, idUser);
   }
 
-  async getUserByEmail(email: string): Promise<ResponseUserDto | undefined> {
+  async getUserByEmail(email: string): Promise<UserWithPassword | undefined> {
     const user = await this.dbService.query(
       'select * from users where email = $1',
       [email],
@@ -59,7 +59,7 @@ export class UsersService {
 
     if (!emailUser) return undefined;
 
-    return plainToInstance(ResponseUserDto, emailUser);
+    return emailUser as UserWithPassword;
   }
 
   async getUserByName(

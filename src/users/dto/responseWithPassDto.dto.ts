@@ -4,5 +4,5 @@ import { ResponseUserDto } from './responseUserDto.dto';
 export class UserWithPassword extends ResponseUserDto {
   @IsString()
   @MinLength(8)
-  password: string;
+  declare password: string;
 }

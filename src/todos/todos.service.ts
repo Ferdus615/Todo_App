@@ -16,8 +16,6 @@ export class TodosService {
     return task.rows[0];
   }
 
-  // async createReaction(dto: CreateReactionDto):
-
   async getAllTodos(): Promise<ResponseTodoDto[]> {
     const tasks = await this.dbService.query(
       'select * from todos where isArchived = $1 and isDeleted = $2',
