@@ -1,19 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DbService } from 'src/database/database.service';
 import { ResponseTodoDto } from './dto/responseTodoDto.dto';
 import { CreateTodoDto } from './dto/createTodoDto.dto';
 import { UpdateTodoDto } from './dto/updateTodoDto.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class TodosService {
   constructor(private readonly dbService: DbService) {}
 
-  async createTodo(dto: CreateTodoDto): Promise<ResponseTodoDto> {
+  async createTodo(
+    dto: CreateTodoDto,
+    user_id: number,
+  ): Promise<ResponseTodoDto> {
     const task = await this.dbService.query(
-      'insert into todos (title, description, isCompleted, isArchived, isDeleted) values ($1, $2, $3, $4, $5) returning *',
-      [dto.title, dto.description, false, false, false],
+      'insert into todos (title, description, isCompleted, isArchived, isDeleted, user_id) values ($1, $2, $3, $4, $5, $5) returning *',
+      [dto.title, dto.description, false, false, false, user_id],
     );
-    return task.rows[0];
+    return plainToInstance(ResponseTodoDto, task.rows[0]);
   }
 
   async getAllTodos(): Promise<ResponseTodoDto[]> {
@@ -21,7 +25,8 @@ export class TodosService {
       'select * from todos where isArchived = $1 and isDeleted = $2',
       [false, false],
     );
-    return tasks.rows;
+
+    return plainToInstance(ResponseTodoDto, tasks.rows);
   }
 
   async getCompletedTask(): Promise<ResponseTodoDto[]> {
@@ -29,7 +34,7 @@ export class TodosService {
       'select * from todos where isCompleted = $1',
       [true],
     );
-    return isCompletedTask.rows;
+    return plainToInstance(ResponseTodoDto, isCompletedTask.rows);
   }
 
   async getArchivedTask(): Promise<ResponseTodoDto[]> {
@@ -37,7 +42,7 @@ export class TodosService {
       'select * from todos where isArchived = $1',
       [true],
     );
-    return isArchivedTask.rows;
+    return plainToInstance(ResponseTodoDto, isArchivedTask.rows);
   }
 
   async getDeletedTask(): Promise<ResponseTodoDto[]> {
@@ -45,7 +50,16 @@ export class TodosService {
       'select * from todos where isDeleted = $1',
       [true],
     );
-    return isDeletedTask.rows;
+    return plainToInstance(ResponseTodoDto, isDeletedTask.rows);
+  }
+
+  async getTodoByUser(user_id: number): Promise<ResponseTodoDto | undefined> {
+    const task = await this.dbService.query(
+      'select * from todos where user_id = $1',
+      [user_id],
+    );
+
+    return plainToInstance(ResponseTodoDto, task.rows[0]);
   }
 
   async getOneTodo(id: number): Promise<ResponseTodoDto | undefined> {
@@ -53,7 +67,7 @@ export class TodosService {
       'select * from todos where id = $1',
       [id],
     );
-    return task.rows[0];
+    return plainToInstance(ResponseTodoDto, task.rows[0]);
   }
 
   async updateTodo(
@@ -64,7 +78,7 @@ export class TodosService {
       'update todos set title = $1, description = $2 where id = $3 returning *',
       [dto.title, dto.description, id],
     );
-    return updateTask.rows[0];
+    return plainToInstance(ResponseTodoDto, updateTask.rows[0]);
   }
 
   async updateStatus(
@@ -91,13 +105,18 @@ export class TodosService {
       ],
     );
 
-    return updateTaskStatus.rows[0];
+    return plainToInstance(ResponseTodoDto, updateTaskStatus.rows[0]);
   }
 
-  async deleteTodo(id: number): Promise<void> {
-    await this.dbService.query(
-      'delete from todos where id = $1 and isDeleted = true',
-      [id],
+  async deleteTodo(id: number, user_id: number): Promise<void> {
+    const result = await this.dbService.query(
+      'delete from todos where id = $1 and user_id = $2 and isDeleted = true',
+      [id, user_id],
     );
+
+    if (!result)
+      throw new NotFoundException(
+        `Todo not found or don't belong to this user!`,
+      );
   }
 }

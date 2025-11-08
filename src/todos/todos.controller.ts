@@ -21,8 +21,11 @@ export class TodosController {
 
   @Post('/')
   @HttpCode(201)
-  async createTodo(@Body() dto: CreateTodoDto): Promise<ResponseTodoDto> {
-    return this.todosService.createTodo(dto);
+  async createTodo(
+    @Body() dto: CreateTodoDto,
+    @Body() user_id: number,
+  ): Promise<ResponseTodoDto> {
+    return this.todosService.createTodo(dto, user_id);
   }
 
   @Get('/')
@@ -43,6 +46,17 @@ export class TodosController {
   @Get('/deleted')
   async isDeletedTask() {
     return this.todosService.getDeletedTask();
+  }
+
+  @Get('/user/:id')
+  async getTodoByUser(@Param('user_id') user_id: string) {
+    const task = await this.todosService.getTodoByUser(parseInt(user_id, 10));
+
+    if (!task) {
+      throw new NotFoundException(`Todo for user:${user_id} not found`);
+    }
+
+    return task;
   }
 
   @Get('/:id')
@@ -80,7 +94,7 @@ export class TodosController {
 
   @Delete('/:id')
   @HttpCode(204)
-  async deleteTodo(@Param('id') id: string) {
-    await this.todosService.deleteTodo(parseInt(id, 10));
+  async deleteTodo(@Param('id') id: string, @Param('user_id') user_id: string) {
+    await this.todosService.deleteTodo(parseInt(id, 10), parseInt(user_id, 10));
   }
 }
