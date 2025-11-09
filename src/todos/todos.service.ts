@@ -14,7 +14,7 @@ export class TodosService {
     user_id: number,
   ): Promise<ResponseTodoDto> {
     const task = await this.dbService.query(
-      'insert into todos (title, description, isCompleted, isArchived, isDeleted, user_id) values ($1, $2, $3, $4, $5, $5) returning *',
+      'insert into todos (title, description, isCompleted, isArchived, isDeleted, user_id) values ($1, $2, $3, $4, $5, $6) returning *',
       [dto.title, dto.description, false, false, false, user_id],
     );
     return plainToInstance(ResponseTodoDto, task.rows[0]);

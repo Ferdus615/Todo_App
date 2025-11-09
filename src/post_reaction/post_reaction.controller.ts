@@ -5,15 +5,18 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { PostReactionService } from './post_reaction.service';
 import { CreateReactionDto } from './dto/createReactionDto.dto';
 import { ResponseReactionDto } from './dto/responseReactionDto.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('react')
 export class PostReactionController {
   constructor(private readonly postReactionService: PostReactionService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('/')
   async upsertReaction(
     @Body() dto: CreateReactionDto,
@@ -22,11 +25,13 @@ export class PostReactionController {
     return this.postReactionService.upsertReaction(dto, parseInt(user_id, 10));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/')
   async getAllReaction(): Promise<ResponseReactionDto[]> {
     return this.postReactionService.getAllReaction();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async getOneReaction(@Param('id') id: string) {
     const reactId = await this.postReactionService.getOneReaction(
@@ -38,6 +43,7 @@ export class PostReactionController {
     return reactId;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/todo/:todo_id')
   async getReactionByTodo(@Param('todo_id') todo_id: string) {
     const todoReact = await this.postReactionService.getReactionByTodo(
@@ -50,6 +56,7 @@ export class PostReactionController {
     return todoReact;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/user/:user_id')
   async getReactionByUser(@Param('user_id') user_id: string) {
     const userTodo = await this.postReactionService.getReactionByUser(

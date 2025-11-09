@@ -32,13 +32,15 @@ export class UsersService {
   }
 
   async getAllUser(): Promise<ResponseUserDto[]> {
-    const users = await this.dbService.query('select * from users');
+    const users = await this.dbService.query(
+      'select id, email, first_name, last_name from users',
+    );
     return plainToInstance(ResponseUserDto, users.rows);
   }
 
   async getuserById(id: number): Promise<ResponseUserDto> {
     const user = await this.dbService.query(
-      'select * from users where id = $1',
+      'select id, email, first_name, last_name from users where id = $1',
       [id],
     );
 
@@ -80,7 +82,7 @@ export class UsersService {
 
   async deleteUser(id: number): Promise<ResponseUserDto> {
     const result = await this.dbService.query(
-      'delete from users where id = $1 returning id, email',
+      'delete from users where id = $1 returning id, email, first_name, last_name',
       [id],
     );
     if (!result) throw new NotFoundException("User doesn't exists!");

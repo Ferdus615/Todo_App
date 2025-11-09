@@ -2,6 +2,7 @@ import {
   Body,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -58,6 +59,12 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
       user: userResponse,
     };
+  }
+
+  async getProfile(user_id: number) {
+    const user = await this.userService.getuserById(user_id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 
   async logout() {
