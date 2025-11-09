@@ -5,13 +5,16 @@ import {
   NotFoundException,
   Param,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PostReactionService } from './post_reaction.service';
 import { CreateReactionDto } from './dto/createReactionDto.dto';
 import { ResponseReactionDto } from './dto/responseReactionDto.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('react')
 @Controller('react')
 export class PostReactionController {
   constructor(private readonly postReactionService: PostReactionService) {}
@@ -20,9 +23,10 @@ export class PostReactionController {
   @Post('/')
   async upsertReaction(
     @Body() dto: CreateReactionDto,
-    @Body() user_id: string,
+    @Req() req,
   ): Promise<ResponseReactionDto> {
-    return this.postReactionService.upsertReaction(dto, parseInt(user_id, 10));
+    const user = (req as any).user as { user_id: number };
+    return this.postReactionService.upsertReaction(dto, user.user_id);
   }
 
   @UseGuards(JwtAuthGuard)

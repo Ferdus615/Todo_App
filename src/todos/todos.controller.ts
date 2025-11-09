@@ -17,7 +17,9 @@ import { CreateTodoDto } from './dto/createTodoDto.dto';
 import { UpdateTodoDto } from './dto/updateTodoDto.dto';
 import { ResponseTodoDto } from './dto/responseTodoDto.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('todos')
 @Controller('todo')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
@@ -58,12 +60,14 @@ export class TodosController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/user/:id')
-  async getTodoByUser(@Param('user_id') user_id: string) {
-    const task = await this.todosService.getTodoByUser(parseInt(user_id, 10));
+  @Get('/user')
+  async getTodoByUser(@Req() req) {
+    const user = req.user as { user_id: number };
+
+    const task = await this.todosService.getTodoByUser(user.user_id);
 
     if (!task) {
-      throw new NotFoundException(`Todo for user:${user_id} not found`);
+      throw new NotFoundException(`Todo for user:${user.user_id} not found`);
     }
 
     return task;

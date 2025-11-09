@@ -26,7 +26,9 @@ export class TodosService {
       [false, false],
     );
 
-    return plainToInstance(ResponseTodoDto, tasks.rows);
+    return plainToInstance(ResponseTodoDto, tasks.rows, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getCompletedTask(): Promise<ResponseTodoDto[]> {
@@ -34,7 +36,9 @@ export class TodosService {
       'select * from todos where isCompleted = $1',
       [true],
     );
-    return plainToInstance(ResponseTodoDto, isCompletedTask.rows);
+    return plainToInstance(ResponseTodoDto, isCompletedTask.rows, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getArchivedTask(): Promise<ResponseTodoDto[]> {
@@ -42,7 +46,9 @@ export class TodosService {
       'select * from todos where isArchived = $1',
       [true],
     );
-    return plainToInstance(ResponseTodoDto, isArchivedTask.rows);
+    return plainToInstance(ResponseTodoDto, isArchivedTask.rows, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getDeletedTask(): Promise<ResponseTodoDto[]> {
@@ -50,16 +56,20 @@ export class TodosService {
       'select * from todos where isDeleted = $1',
       [true],
     );
-    return plainToInstance(ResponseTodoDto, isDeletedTask.rows);
+    return plainToInstance(ResponseTodoDto, isDeletedTask.rows, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  async getTodoByUser(user_id: number): Promise<ResponseTodoDto | undefined> {
+  async getTodoByUser(user_id: number): Promise<ResponseTodoDto[] | undefined> {
     const task = await this.dbService.query(
       'select * from todos where user_id = $1',
       [user_id],
     );
 
-    return plainToInstance(ResponseTodoDto, task.rows[0]);
+    return plainToInstance(ResponseTodoDto, task.rows, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getOneTodo(id: number): Promise<ResponseTodoDto | undefined> {
@@ -67,7 +77,9 @@ export class TodosService {
       'select * from todos where id = $1',
       [id],
     );
-    return plainToInstance(ResponseTodoDto, task.rows[0]);
+    return plainToInstance(ResponseTodoDto, task.rows[0], {
+      excludeExtraneousValues: true,
+    });
   }
 
   async updateTodo(
@@ -78,7 +90,9 @@ export class TodosService {
       'update todos set title = $1, description = $2 where id = $3 returning *',
       [dto.title, dto.description, id],
     );
-    return plainToInstance(ResponseTodoDto, updateTask.rows[0]);
+    return plainToInstance(ResponseTodoDto, updateTask.rows[0], {
+      excludeExtraneousValues: true,
+    });
   }
 
   async updateStatus(
@@ -105,7 +119,9 @@ export class TodosService {
       ],
     );
 
-    return plainToInstance(ResponseTodoDto, updateTaskStatus.rows[0]);
+    return plainToInstance(ResponseTodoDto, updateTaskStatus.rows[0], {
+      excludeExtraneousValues: true,
+    });
   }
 
   async deleteTodo(id: number, user_id: number): Promise<void> {

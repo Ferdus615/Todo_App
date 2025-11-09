@@ -23,14 +23,18 @@ export class PostReactionService {
         [dto.todo_id, dto.reaction_type, user_id],
       );
 
-      return plainToInstance(ResponseReactionDto, addReaction.rows[0]);
+      return plainToInstance(ResponseReactionDto, addReaction.rows[0], {
+        excludeExtraneousValues: true,
+      });
     } else {
       const updateReaction = await this.dbService.query(
         'update post_reaction set reaction_type = $1, created_at = CURRENT_TIMESTAMP where todo_id = $2 and user_id = $3 returning *',
         [dto.reaction_type, dto.todo_id, user_id],
       );
 
-      return plainToInstance(ResponseReactionDto, updateReaction.rows[0]);
+      return plainToInstance(ResponseReactionDto, updateReaction.rows[0], {
+        excludeExtraneousValues: true,
+      });
     }
   }
 
@@ -40,7 +44,9 @@ export class PostReactionService {
       [],
     );
 
-    return plainToInstance(ResponseReactionDto, allReaction.rows);
+    return plainToInstance(ResponseReactionDto, allReaction.rows, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getOneReaction(id: number): Promise<ResponseReactionDto | undefined> {
@@ -49,7 +55,9 @@ export class PostReactionService {
       [id],
     );
 
-    return plainToInstance(ResponseReactionDto, reaction.rows[0]);
+    return plainToInstance(ResponseReactionDto, reaction.rows[0], {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getReactionByTodo(
@@ -59,17 +67,21 @@ export class PostReactionService {
       'select * from post_reaction where todo_id = $1',
       [todo_id],
     );
-    return plainToInstance(ResponseReactionDto, reactionOfTodo.rows[0]);
+    return plainToInstance(ResponseReactionDto, reactionOfTodo.rows[0], {
+      excludeExtraneousValues: true,
+    });
   }
 
   async getReactionByUser(
     user_id: number,
-  ): Promise<ResponseReactionDto | undefined> {
+  ): Promise<ResponseReactionDto[] | undefined> {
     const reactionOfUser = await this.dbService.query(
       'select * from post_reaction where user_id = $1',
       [user_id],
     );
 
-    return plainToInstance(ResponseReactionDto, reactionOfUser.rows[0]);
+    return plainToInstance(ResponseReactionDto, reactionOfUser.rows, {
+      excludeExtraneousValues: true,
+    });
   }
 }
