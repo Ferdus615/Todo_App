@@ -29,8 +29,8 @@ export class TodosController {
     @Body() dto: CreateTodoDto,
     @Req() req: Request,
   ): Promise<ResponseTodoDto> {
-    const user = (req as any).user as { id: number };
-    return this.todosService.createTodo(dto, user.id);
+    const user = (req as any).user as { user_id: number; email: string };
+    return this.todosService.createTodo(dto, user.user_id);
   }
 
   @UseGuards(JwtAuthGuard)
