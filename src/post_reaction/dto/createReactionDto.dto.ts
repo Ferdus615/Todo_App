@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional } from 'class-validator';
+import { IsEnum, IsInt } from 'class-validator';
 import { ReactionType } from '../enum/reactionType.enum';
 
 export class CreateReactionDto {
@@ -7,8 +7,4 @@ export class CreateReactionDto {
 
   @IsEnum(ReactionType)
   reaction_type: ReactionType;
-
-  @IsOptional()
-  @IsInt()
-  user_id?: number;
 }

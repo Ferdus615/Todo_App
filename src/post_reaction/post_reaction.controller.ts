@@ -5,29 +5,37 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PostReactionService } from './post_reaction.service';
 import { CreateReactionDto } from './dto/createReactionDto.dto';
 import { ResponseReactionDto } from './dto/responseReactionDto.dto';
-import { UpadateReactionDto } from './dto/updateReactionDto.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('react')
 @Controller('react')
 export class PostReactionController {
   constructor(private readonly postReactionService: PostReactionService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('/')
   async upsertReaction(
     @Body() dto: CreateReactionDto,
+    @Req() req,
   ): Promise<ResponseReactionDto> {
-    return this.postReactionService.upsertReaction(dto);
+    const user = (req as any).user as { user_id: number };
+    return this.postReactionService.upsertReaction(dto, user.user_id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/')
   async getAllReaction(): Promise<ResponseReactionDto[]> {
     return this.postReactionService.getAllReaction();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async getOneReaction(@Param('id') id: string) {
     const reactId = await this.postReactionService.getOneReaction(
@@ -39,8 +47,9 @@ export class PostReactionController {
     return reactId;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/todo/:todo_id')
-  async getReactionBtTodo(@Param('todo_id') todo_id: string) {
+  async getReactionByTodo(@Param('todo_id') todo_id: string) {
     const todoReact = await this.postReactionService.getReactionByTodo(
       parseInt(todo_id, 10),
     );
@@ -51,20 +60,16 @@ export class PostReactionController {
     return todoReact;
   }
 
-  // @Put('/:id')
-  // async updateReaction(
-  //   @Param('id') id: string,
-  //   @Body('dto') dto: UpadateReactionDto,
-  // ) {
-  //   const reaction = await this.postReactionService.updateReaction(
-  //     parseInt(id, 10),
-  //     dto,
-  //   );
+  @UseGuards(JwtAuthGuard)
+  @Get('/user/:user_id')
+  async getReactionByUser(@Param('user_id') user_id: string) {
+    const userTodo = await this.postReactionService.getReactionByUser(
+      parseInt(user_id, 10),
+    );
 
-  //   console.log(reaction);
+    if (!userTodo)
+      throw new NotFoundException(`Todo for user${user_id} not found!`);
 
-  //   if (!reaction) throw new NotFoundException(`Item with id:${id} not found!`);
-
-  //   return reaction;
-  // }
+    return userTodo;
+  }
 }
