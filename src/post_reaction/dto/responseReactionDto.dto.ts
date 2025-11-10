@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { ReactionType } from '../enum/reactionType.enum';
 import { Expose } from 'class-transformer';
 
