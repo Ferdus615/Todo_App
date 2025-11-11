@@ -11,6 +11,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/createUserDto.dto';
 import { LoginUserDto } from './dto/loginUserDto.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthResponseDto } from './dto/authResponseDto.dto';
+import { ResponseUserDto } from 'src/users/dto/responseUserDto.dto';
 import {
   ApiTags,
   ApiOperation,
