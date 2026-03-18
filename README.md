@@ -53,6 +53,11 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Read the API Documentation (Swagger)
+```bash
+/api
+```
+
 ## Run tests
 
 ```bash
