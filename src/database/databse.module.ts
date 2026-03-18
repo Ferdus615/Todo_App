@@ -4,7 +4,6 @@ import { Pool } from 'pg';
 import { PG_POOL } from './database.constants';
 import { DbService } from './database.service';
 
-
 @Global()
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true })],
@@ -14,7 +13,7 @@ import { DbService } from './database.service';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const pool = new Pool({
-         connectionString: config.get<string>('CONNECTION_STRING'),
+          connectionString: config.get<string>('CONNECTION_STRING'),
           max: 10,
           idleTimeoutMillis: 30_000,
           connectionTimeoutMillis: 5_000,
@@ -35,8 +34,10 @@ import { DbService } from './database.service';
       inject: [PG_POOL],
       useFactory: (pool: Pool) =>
         ({
-          async onModuleDestroy() { await pool.end(); },
-        } as OnModuleDestroy),
+          async onModuleDestroy() {
+            await pool.end();
+          },
+        }) as OnModuleDestroy,
     },
   ],
   exports: [PG_POOL, DbService],
