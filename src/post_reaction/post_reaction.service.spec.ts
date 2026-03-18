@@ -1,3 +1,4 @@
+import { DbService } from 'src/database/database.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostReactionService } from './post_reaction.service';
 
@@ -6,7 +7,7 @@ describe('PostReactionService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PostReactionService],
+      providers: [PostReactionService, { provide: DbService, useValue: {} }],
     }).compile();
 
     service = module.get<PostReactionService>(PostReactionService);

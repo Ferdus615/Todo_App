@@ -1,3 +1,4 @@
+import { DbService } from 'src/database/database.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostReactionController } from './post_reaction.controller';
 import { PostReactionService } from './post_reaction.service';
@@ -8,7 +9,7 @@ describe('PostReactionController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PostReactionController],
-      providers: [PostReactionService],
+      providers: [PostReactionService, { provide: DbService, useValue: {} }],
     }).compile();
 
     controller = module.get<PostReactionController>(PostReactionController);
